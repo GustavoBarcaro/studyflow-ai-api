@@ -1,0 +1,44 @@
+services:
+  terraform:
+    image: hashicorp/terraform:1.8
+    working_dir: /workspace/iac/database
+    volumes:
+      - ./:/workspace
+      - shared_env:/shared
+    env_file:
+      - .env
+    environment:
+      TFVARS_FILE: ${TFVARS_FILE:-environments/dev.tfvars}
+    entrypoint: ["/bin/sh", "./export-env.sh"]
+
+  push-schema:
+    build: .
+    depends_on:
+      terraform:
+        condition: service_completed_successfully
+    volumes:
+      - shared_env:/shared
+    command: >
+      sh -c "
+        export $(cat /shared/.env.generated | xargs) &&
+        npx prisma db push &&
+        npx prisma generate
+      "
+
+  api:
+    build: .
+    depends_on:
+      push-schema:
+        condition: service_completed_successfully
+    volumes:
+      - shared_env:/shared
+    ports:
+      - "3333:3000"
+    command: >
+      sh -c "
+        export $(cat /shared/.env.generated | xargs) &&
+        node dist/server.js
+      "
+
+volumes:
+  shared_env:
