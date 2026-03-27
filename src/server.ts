@@ -1,16 +1,17 @@
-import Fastify from 'fastify'
-import cors from '@fastify/cors'
-import { topicsRoutes } from './modules/topics/topics.routes'
+import { buildApp } from './app'
 
-const app = Fastify()
+async function bootstrap() {
+  const app = await buildApp()
 
-app.register(cors)
-app.register(topicsRoutes)
+  await app.listen({
+    port: Number(process.env.PORT || 3000),
+    host: '0.0.0.0',
+  })
 
-app.get('/health', async () => {
-  return { status: 'ok' }
-})
+  console.log(`Server running on http://0.0.0.0:${process.env.PORT || 3000}`)
+}
 
-app.listen({ port: 3000, host: '0.0.0.0' }).then(() => {
-  console.log('Server running on http://0.0.0.0:3000')
+bootstrap().catch((err) => {
+  console.error(err)
+  process.exit(1)
 })
