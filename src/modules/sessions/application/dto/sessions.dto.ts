@@ -12,6 +12,8 @@ export const messageSchema = z.object({
   createdAt: z.date(),
 })
 
+export const messagesListResponseSchema = z.array(messageSchema)
+
 export const sessionTopicSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
@@ -49,7 +51,6 @@ export const createSessionDataSchema = z.object({
 })
 
 export const createMessageBodySchema = z.object({
-  role: z.string().min(1),
   content: z.string().min(1),
 })
 
@@ -58,6 +59,11 @@ export const createMessageDataSchema = z.object({
   userId: z.string().uuid(),
   role: z.string().min(1),
   content: z.string().min(1),
+})
+
+export const createMessageResponseSchema = z.object({
+  userMessage: messageSchema,
+  assistantMessage: messageSchema,
 })
 
 export type SessionParamsDTO = z.infer<typeof sessionParamsSchema>

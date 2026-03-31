@@ -1,3 +1,5 @@
+import { GroqProvider } from '../../../../infra/services/ai/groq-provider'
+import { MESSAGE_ROLES } from '../../../../shared/constants/message-roles'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import {
   CreateMessageBodyDTO,
@@ -11,16 +13,20 @@ export async function createMessageController(
   reply: FastifyReply
 ) {
   const { id } = request.params as SessionParamsDTO
-  const { role, content } = request.body as CreateMessageBodyDTO
+  const { content } = request.body as CreateMessageBodyDTO
   const userId = request.user.sub
 
   const sessionsRepository = new SessionsRepository()
-  const createMessageUseCase = new CreateMessageUseCase(sessionsRepository)
+  const aiProvider = new GroqProvider()
+  const createMessageUseCase = new CreateMessageUseCase(
+    sessionsRepository,
+    aiProvider
+  )
 
   const message = await createMessageUseCase.execute({
     sessionId: id,
     userId,
-    role,
+    role: MESSAGE_ROLES.USER,
     content,
   })
 

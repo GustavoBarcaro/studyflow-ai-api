@@ -57,6 +57,28 @@ export class SessionsRepository {
     })
   }
 
+  async findByIdAndUserIdWithRecentMessages(
+    id: string,
+    userId: string,
+    limit: number
+  ) {
+    return prisma.studySession.findFirst({
+      where: {
+        id,
+        userId,
+      },
+      include: {
+        topic: true,
+        messages: {
+          take: limit,
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+      },
+    })
+  }
+
   async createMessage(data: CreateMessageDataDTO) {
     return prisma.message.create({
       data: {

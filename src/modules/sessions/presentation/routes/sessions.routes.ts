@@ -1,8 +1,10 @@
 import { FastifyInstance } from 'fastify'
 import {
   createMessageBodySchema,
+  createMessageResponseSchema,
   createSessionBodySchema,
   messageSchema,
+  messagesListResponseSchema,
   sessionDetailsResponseSchema,
   sessionParamsSchema,
   sessionResponseSchema,
@@ -11,6 +13,7 @@ import {
 import { createMessageController } from '../controllers/create-message.controller'
 import { createSessionController } from '../controllers/create-session.controller'
 import { getSessionController } from '../controllers/get-session.controller'
+import { getSessionMessagesController } from '../controllers/get-session-messages.controller'
 import { getSessionsController } from '../controllers/get-sessions.controller'
 
 export async function sessionsRoutes(app: FastifyInstance) {
@@ -71,10 +74,26 @@ export async function sessionsRoutes(app: FastifyInstance) {
       params: sessionParamsSchema,
       body: createMessageBodySchema,
       response: {
-        201: messageSchema,
+        201: createMessageResponseSchema,
       },
     },
     onRequest: [app.authenticate],
     handler: createMessageController,
+  })
+
+  app.withTypeProvider().route({
+    method: 'GET',
+    url: '/sessions/:id/messages',
+    schema: {
+      tags: ['sessions'],
+      summary: 'Get session messages',
+      security: [{ bearerAuth: [] }],
+      params: sessionParamsSchema,
+      response: {
+        200: messagesListResponseSchema,
+      },
+    },
+    onRequest: [app.authenticate],
+    handler: getSessionMessagesController,
   })
 }

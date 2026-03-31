@@ -45,9 +45,49 @@ The project uses these keys:
 - `JWT_SECRET`: secret used to sign access and refresh tokens
 - `JWT_ACCESS_EXPIRES_IN`: access token expiration, for example `15m`
 - `JWT_REFRESH_EXPIRES_IN`: refresh token expiration, for example `7d`
+- `GROQ_API_KEY`: API key for the Groq provider
+- `GROQ_MODEL`: default Groq model used by the AI provider
+- `GROQ_BASE_URL`: Groq API base URL
 - `PORT`: API port
 - `NODE_ENV`: runtime environment
 - `TFVARS_FILE`: Terraform variable file used by Docker provisioning
+
+## How To Get The Groq Key
+
+The API uses Groq as the LLM provider for the study session chat flow.
+
+To use it:
+
+1. create an account in Groq
+2. open the API keys area in the Groq dashboard
+3. generate a new API key
+4. copy the key and add it to your `.env`
+
+Example:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_BASE_URL=https://api.groq.com/openai/v1
+```
+
+### How The Project Uses Groq
+
+When you send a message to:
+
+```text
+POST /sessions/:id/messages
+```
+
+the backend:
+
+- saves the user's message
+- loads the existing session history
+- sends that history to the Groq provider
+- saves the assistant response as a new message
+- returns both the user message and the assistant message
+
+If `GROQ_API_KEY` is missing, this flow will fail at runtime.
 
 ## How To Get The Prisma Key
 
@@ -109,6 +149,9 @@ PRISMA_SERVICE_TOKEN=your_prisma_service_token
 JWT_SECRET=replace_with_a_long_random_secret
 JWT_ACCESS_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_BASE_URL=https://api.groq.com/openai/v1
 PORT=3333
 NODE_ENV=development
 TFVARS_FILE=environments/dev.tfvars
@@ -122,9 +165,10 @@ If you want to run the API directly on your machine:
 
 1. create `.env`
 2. make sure `DATABASE_URL` points to a valid Prisma Postgres connection string
-3. install dependencies
-4. push the schema
-5. start the dev server
+3. make sure `GROQ_API_KEY` is set if you want AI responses in session messages
+4. install dependencies
+5. push the schema
+6. start the dev server
 
 Commands:
 
@@ -149,4 +193,5 @@ npm run prisma:push
 
 - `docker compose up --build` is the simplest path for a fresh setup
 - `DATABASE_URL` is required for local non-Docker execution
+- `GROQ_API_KEY` is required for `POST /sessions/:id/messages` to generate an AI reply
 - the generated Prisma connection string is sensitive and should never be committed
