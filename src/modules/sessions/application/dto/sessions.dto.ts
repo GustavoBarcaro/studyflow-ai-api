@@ -50,6 +50,11 @@ export const createSessionDataSchema = z.object({
   userId: z.string().uuid(),
 })
 
+export const deleteSessionDataSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string().uuid(),
+})
+
 export const createMessageBodySchema = z.object({
   content: z.string().min(1),
 })
@@ -69,5 +74,6 @@ export const createMessageResponseSchema = z.object({
 export type SessionParamsDTO = z.infer<typeof sessionParamsSchema>
 export type CreateSessionBodyDTO = z.infer<typeof createSessionBodySchema>
 export type CreateSessionDataDTO = z.infer<typeof createSessionDataSchema>
+export type DeleteSessionDataDTO = z.infer<typeof deleteSessionDataSchema>
 export type CreateMessageBodyDTO = z.infer<typeof createMessageBodySchema>
 export type CreateMessageDataDTO = z.infer<typeof createMessageDataSchema>

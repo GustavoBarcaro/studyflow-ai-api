@@ -7,8 +7,8 @@ import {
   buildStudyTopicPrompt,
 } from '../../../../shared/prompts/study-prompts'
 import { buildSessionContext } from '../../../../shared/utils/build-session-context'
-import { generateQuizResponseSchema } from '../dto/quiz.dto'
 import { SessionsRepository } from '../../../sessions/repositories/sessions-repository'
+import { parseQuizResponse } from '../parsers/parse-quiz-response'
 
 type GenerateQuizInput = {
   sessionId: string
@@ -35,7 +35,7 @@ export class GenerateQuizUseCase {
 
     const contextMessages = buildSessionContext(session.messages)
 
-    const response = await this.aiProvider.generateObject({
+    const response = await this.aiProvider.generateText({
       messages: [
         {
           role: MESSAGE_ROLES.SYSTEM,
@@ -54,12 +54,8 @@ export class GenerateQuizUseCase {
         },
         ...contextMessages,
       ],
-      schema: generateQuizResponseSchema,
-      schemaName: 'study_session_quiz',
-      schemaDescription:
-        'A structured multiple-choice quiz generated from a study session.',
     })
 
-    return response.object
+    return parseQuizResponse(response.text)
   }
 }

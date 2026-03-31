@@ -5,6 +5,7 @@ COPY package*.json ./
 RUN npm ci
 
 COPY prisma ./prisma
+COPY scripts ./scripts
 RUN npx prisma generate
 
 COPY tsconfig.json ./

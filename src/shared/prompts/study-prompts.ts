@@ -85,5 +85,9 @@ JSON format:
     }
   ]
 }
+
+Do not use markdown.
+Do not include any text before or after the JSON.
+
 `.trim()
 }

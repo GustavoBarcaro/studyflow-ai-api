@@ -2,6 +2,7 @@ import { prisma } from '../../../infra/db/prisma'
 import {
   CreateMessageDataDTO,
   CreateSessionDataDTO,
+  DeleteSessionDataDTO,
 } from '../application/dto/sessions.dto'
 
 export class SessionsRepository {
@@ -91,5 +92,21 @@ export class SessionsRepository {
         },
       },
     })
+  }
+
+  async delete(data: DeleteSessionDataDTO) {
+    const session = await this.findByIdAndUserId(data.id, data.userId)
+
+    if (!session) {
+      return null
+    }
+
+    await prisma.studySession.delete({
+      where: {
+        id: data.id,
+      },
+    })
+
+    return session
   }
 }

@@ -11,7 +11,7 @@ services:
       TFVARS_FILE: ${TFVARS_FILE:-environments/dev.tfvars}
     entrypoint: ["/bin/sh", "./export-env.sh"]
 
-  push-schema:
+  migrate:
     build: .
     depends_on:
       terraform:
@@ -22,15 +22,14 @@ services:
       - shared_env:/shared
     command: >
       sh -c "
-        export $(cat /shared/.env.generated | xargs) &&
-        npx prisma db push &&
+        sh ./scripts/migrate.sh &&
         npx prisma generate
       "
 
   api:
     build: .
     depends_on:
-      push-schema:
+      migrate:
         condition: service_completed_successfully
     env_file:
       - .env

@@ -41,7 +41,7 @@ cp .env.example .env
 The project uses these keys:
 
 - `PRISMA_SERVICE_TOKEN`: token used by the Terraform Prisma provider to provision the database and generate the connection string
-- `DATABASE_URL`: Prisma connection string used by the app and by `prisma db push`
+- `DATABASE_URL`: Prisma connection string used by the app and by Prisma migrations
 - `JWT_SECRET`: secret used to sign access and refresh tokens
 - `JWT_ACCESS_EXPIRES_IN`: access token expiration, for example `15m`
 - `JWT_REFRESH_EXPIRES_IN`: refresh token expiration, for example `7d`
@@ -121,7 +121,7 @@ The Docker flow does three things in sequence:
 
 1. provisions the Prisma Postgres database with Terraform
 2. generates `DATABASE_URL`
-3. pushes the Prisma schema and starts the API
+3. applies Prisma migrations and starts the API
 
 Start everything with:
 
@@ -169,7 +169,7 @@ If you want to run the API directly on your machine:
 2. make sure `DATABASE_URL` points to a valid Prisma Postgres connection string
 3. make sure `GROQ_API_KEY` is set if you want AI responses in session messages
 4. install dependencies
-5. push the schema
+5. apply the migrations
 6. start the dev server
 
 Commands:
@@ -177,7 +177,7 @@ Commands:
 ```bash
 npm install
 npm run prisma:generate
-npm run prisma:push
+npm run prisma:migrate:deploy
 npm run dev
 ```
 
@@ -197,6 +197,7 @@ npm run build
 npm run start
 npm run prisma:generate
 npm run prisma:push
+npm run prisma:migrate:deploy
 ```
 
 ## Notes

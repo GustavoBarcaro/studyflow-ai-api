@@ -12,6 +12,7 @@ import {
 } from '../../application/dto/sessions.dto'
 import { createMessageController } from '../controllers/create-message.controller'
 import { createSessionController } from '../controllers/create-session.controller'
+import { deleteSessionController } from '../controllers/delete-session.controller'
 import { getSessionController } from '../controllers/get-session.controller'
 import { getSessionMessagesController } from '../controllers/get-session-messages.controller'
 import { getSessionsController } from '../controllers/get-sessions.controller'
@@ -62,6 +63,22 @@ export async function sessionsRoutes(app: FastifyInstance) {
     },
     onRequest: [app.authenticate],
     handler: getSessionController,
+  })
+
+  app.withTypeProvider().route({
+    method: 'DELETE',
+    url: '/sessions/:id',
+    schema: {
+      tags: ['sessions'],
+      summary: 'Delete session',
+      security: [{ bearerAuth: [] }],
+      params: sessionParamsSchema,
+      response: {
+        204: sessionResponseSchema.nullable(),
+      },
+    },
+    onRequest: [app.authenticate],
+    handler: deleteSessionController,
   })
 
   app.withTypeProvider().route({
