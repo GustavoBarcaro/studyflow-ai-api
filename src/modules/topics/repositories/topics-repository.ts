@@ -1,8 +1,8 @@
 import { prisma } from '../../../infra/db/prisma'
-import { CreateTopicDTO } from '../application/dto/create-topic.dto'
+import { CreateTopicDataDTO } from '../application/dto/create-topic.dto'
 
 export class TopicsRepository {
-  async create(data: CreateTopicDTO) {
+  async create(data: CreateTopicDataDTO) {
     return prisma.topic.create({
       data: {
         name: data.name,

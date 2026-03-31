@@ -2,16 +2,14 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { UsersRepository } from '../../repositories/users-repository'
 import { BcryptHasher } from '../../../../infra/services/hash-bcrypt'
 import { LoginUseCase } from '../../application/use-cases/login.use-case'
+import { LoginDTO } from '../../application/dto/login.dto'
 
 export async function loginController(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const { email, password } = request.body as {
-    email: string
-    password: string
-  }
-
+  const { email, password } = request.body as LoginDTO
+  
   try {
     const usersRepository = new UsersRepository()
     const hasher = new BcryptHasher()
