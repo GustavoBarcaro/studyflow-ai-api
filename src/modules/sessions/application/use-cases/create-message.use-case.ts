@@ -1,21 +1,13 @@
-import {
-  AIProvider,
-  AIProviderMessage,
-} from '../../../../infra/services/ai/ai-provider'
+import { AIProvider } from '../../../../infra/services/ai/ai-provider'
 import { MESSAGE_ROLES } from '../../../../shared/constants/message-roles'
+import {
+  buildStudySessionTitlePrompt,
+  buildStudyTopicPrompt,
+  CHAT_SYSTEM_PROMPT,
+} from '../../../../shared/prompts/study-prompts'
+import { buildSessionContext } from '../../../../shared/utils/build-session-context'
 import { CreateMessageDataDTO } from '../dto/sessions.dto'
 import { SessionsRepository } from '../../repositories/sessions-repository'
-
-const SYSTEM_PROMPT = `
-You are a senior software engineer and tutor.
-
-Rules:
-- explain in simple terms
-- always give examples
-- keep answers concise
-- if the user makes a typo, assume intent and correct silently
-- adapt explanation for beginners
-`.trim()
 
 const MAX_HISTORY_MESSAGES = 10
 
@@ -38,15 +30,7 @@ export class CreateMessageUseCase {
 
     const userMessage = await this.sessionsRepository.createMessage(data)
 
-    const historyMessages: AIProviderMessage[] = session.messages
-      .reverse()
-      .map((message) => ({
-        role:
-          message.role === MESSAGE_ROLES.ASSISTANT
-            ? MESSAGE_ROLES.ASSISTANT
-            : MESSAGE_ROLES.USER,
-        content: message.content,
-      }))
+    const historyMessages = buildSessionContext([...session.messages].reverse())
 
     const topic = session.topic.name
     const sessionTitle = session.title
@@ -55,15 +39,15 @@ export class CreateMessageUseCase {
       messages: [
         {
           role: MESSAGE_ROLES.SYSTEM,
-          content: SYSTEM_PROMPT,
+          content: CHAT_SYSTEM_PROMPT,
         },
         {
           role: MESSAGE_ROLES.SYSTEM,
-          content: `The user is studying: ${topic}`,
+          content: buildStudyTopicPrompt(topic),
         },
         {
           role: MESSAGE_ROLES.SYSTEM,
-          content: `Current session title: ${sessionTitle}`,
+          content: buildStudySessionTitlePrompt(sessionTitle),
         },
         ...historyMessages,
         {

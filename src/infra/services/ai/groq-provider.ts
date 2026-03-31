@@ -1,7 +1,9 @@
 import { createGroq } from '@ai-sdk/groq'
-import { generateText } from 'ai'
+import { generateObject, generateText } from 'ai'
 import {
   AIProvider,
+  AIProviderGenerateObjectInput,
+  AIProviderGenerateObjectOutput,
   AIProviderGenerateTextInput,
   AIProviderGenerateTextOutput,
 } from './ai-provider'
@@ -40,6 +42,28 @@ export class GroqProvider implements AIProvider {
 
     return {
       text,
+      model: result.response.modelId || model,
+      finishReason: result.finishReason,
+    }
+  }
+
+  async generateObject<T>(
+    input: AIProviderGenerateObjectInput<T>
+  ): Promise<AIProviderGenerateObjectOutput<T>> {
+    const model = input.model || this.defaultModel
+
+    const result = await generateObject({
+      model: this.provider(model),
+      messages: input.messages,
+      schema: input.schema,
+      schemaName: input.schemaName,
+      schemaDescription: input.schemaDescription,
+      temperature: input.temperature,
+      maxOutputTokens: input.maxTokens,
+    })
+
+    return {
+      object: result.object,
       model: result.response.modelId || model,
       finishReason: result.finishReason,
     }

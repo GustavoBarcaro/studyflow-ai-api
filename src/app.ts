@@ -12,6 +12,7 @@ import jwtPlugin from './infra/auth/jwt'
 import authenticatePlugin from './infra/auth/authenticate'
 import { authRoutes } from './modules/auth/presentation/routes/auth.routes'
 import { sessionsRoutes } from './modules/sessions/presentation/routes/sessions.routes'
+import { studyToolsRoutes } from './modules/study-tools/presentation/routes/study-tools.routes'
 import { topicsRoutes } from './modules/topics/presentation/routes/topics.routes'
 
 export async function buildApp() {
@@ -63,6 +64,7 @@ export async function buildApp() {
   await app.register(authRoutes)
   await app.register(topicsRoutes)
   await app.register(sessionsRoutes)
+  await app.register(studyToolsRoutes)
 
   return app
 }
