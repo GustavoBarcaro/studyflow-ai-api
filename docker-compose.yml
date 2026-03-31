@@ -16,6 +16,8 @@ services:
     depends_on:
       terraform:
         condition: service_completed_successfully
+    env_file:
+      - .env
     volumes:
       - shared_env:/shared
     command: >
@@ -30,10 +32,12 @@ services:
     depends_on:
       push-schema:
         condition: service_completed_successfully
+    env_file:
+      - .env
     volumes:
       - shared_env:/shared
     ports:
-      - "3333:3333"
+      - "${PORT:-3333}:${PORT:-3333}"
     command: >
       sh -c "
         export $(cat /shared/.env.generated | xargs) &&

@@ -10,6 +10,4 @@ CONNECTION_STRING=$(terraform output -raw connection_string)
 
 cat > /shared/.env.generated <<EOF
 DATABASE_URL=$CONNECTION_STRING
-PORT=3333
-NODE_ENV=development
 EOF
