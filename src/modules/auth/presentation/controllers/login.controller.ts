@@ -6,6 +6,7 @@ import { LoginDTO } from '../../application/dto/login.dto'
 import { generateAuthTokens } from '../../../../infra/auth/tokens'
 import { AuthSessionsRepository } from '../../repositories/auth-sessions-repository'
 import { hashRefreshToken } from '../../../../infra/auth/refresh-token-hash'
+import { setRefreshTokenCookie } from '../../../../infra/auth/refresh-token-cookie'
 
 export async function loginController(
   request: FastifyRequest,
@@ -34,9 +35,10 @@ export async function loginController(
       expiresAt: tokens.refreshTokenExpiresAt,
     })
 
+    setRefreshTokenCookie(reply, tokens.refreshToken)
+
     return reply.status(200).send({
       accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
     })
   } catch {
     return reply.status(401).send({

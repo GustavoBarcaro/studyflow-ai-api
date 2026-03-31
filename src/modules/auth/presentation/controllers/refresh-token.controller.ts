@@ -4,6 +4,10 @@ import { generateAuthTokens } from '../../../../infra/auth/tokens'
 import { AuthSessionsRepository } from '../../repositories/auth-sessions-repository'
 import { UsersRepository } from '../../repositories/users-repository'
 import { hashRefreshToken } from '../../../../infra/auth/refresh-token-hash'
+import {
+  getRefreshTokenCookieName,
+  setRefreshTokenCookie,
+} from '../../../../infra/auth/refresh-token-cookie'
 
 type JWTPayload = {
   sub: string
@@ -16,9 +20,13 @@ export async function refreshTokenController(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const { refreshToken } = request.body as RefreshTokenDTO
+  const refreshToken = request.cookies[getRefreshTokenCookieName()]
 
   try {
+    if (!refreshToken) {
+      throw new Error('Missing refresh token')
+    }
+
     const payload = await request.server.jwt.verify<JWTPayload>(refreshToken)
 
     if (payload.tokenType !== 'refresh' || !payload.sid) {
@@ -68,9 +76,10 @@ export async function refreshTokenController(
       expiresAt: tokens.refreshTokenExpiresAt,
     })
 
+    setRefreshTokenCookie(reply, tokens.refreshToken)
+
     return reply.status(200).send({
       accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
     })
   } catch {
     return reply.status(401).send({

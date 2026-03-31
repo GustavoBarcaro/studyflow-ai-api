@@ -45,6 +45,7 @@ The project uses these keys:
 - `JWT_SECRET`: secret used to sign access and refresh tokens
 - `JWT_ACCESS_EXPIRES_IN`: access token expiration, for example `15m`
 - `JWT_REFRESH_EXPIRES_IN`: refresh token expiration, for example `7d`
+- `CORS_ORIGINS`: comma-separated list of allowed frontend origins for cross-origin requests with cookies, for example `http://localhost:3000`
 - `GROQ_API_KEY`: API key for the Groq provider
 - `GROQ_MODEL`: default Groq model used by the AI provider
 - `GROQ_BASE_URL`: Groq API base URL
@@ -149,6 +150,7 @@ PRISMA_SERVICE_TOKEN=your_prisma_service_token
 JWT_SECRET=replace_with_a_long_random_secret
 JWT_ACCESS_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
+CORS_ORIGINS=http://localhost:3000
 GROQ_API_KEY=your_groq_api_key
 GROQ_MODEL=llama-3.3-70b-versatile
 GROQ_BASE_URL=https://api.groq.com/openai/v1
@@ -179,6 +181,14 @@ npm run prisma:push
 npm run dev
 ```
 
+For local frontend integration, the API currently expects the frontend origin in `CORS_ORIGINS`. The initial recommended value is:
+
+```env
+CORS_ORIGINS=http://localhost:3000
+```
+
+If you add more frontend origins later, separate them with commas.
+
 ## Useful Scripts
 
 ```bash
@@ -193,5 +203,6 @@ npm run prisma:push
 
 - `docker compose up --build` is the simplest path for a fresh setup
 - `DATABASE_URL` is required for local non-Docker execution
+- `CORS_ORIGINS` must include your frontend origin when sending cookies across origins
 - `GROQ_API_KEY` is required for `POST /sessions/:id/messages` to generate an AI reply
 - the generated Prisma connection string is sensitive and should never be committed

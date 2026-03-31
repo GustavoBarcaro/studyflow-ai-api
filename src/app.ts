@@ -1,5 +1,6 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
+import cookie from '@fastify/cookie'
 import swagger from '@fastify/swagger'
 import swaggerUI from '@fastify/swagger-ui'
 import {
@@ -19,6 +20,22 @@ export async function buildApp() {
   const app = Fastify({
     logger: true,
   }).withTypeProvider<ZodTypeProvider>()
+
+  const allowedOrigins = (process.env.CORS_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+
+  await app.register(cors, {
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true)
+      if (allowedOrigins.includes(origin)) return cb(null, true)
+      return cb(new Error('Not allowed by CORS'), false)
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
 
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
@@ -53,7 +70,8 @@ export async function buildApp() {
       message: (error as any).message,
     })
   })
-  await app.register(cors)
+
+  await app.register(cookie)
   await app.register(jwtPlugin)
   await app.register(authenticatePlugin)
 

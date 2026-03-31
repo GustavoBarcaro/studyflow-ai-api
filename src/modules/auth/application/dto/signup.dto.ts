@@ -6,10 +6,15 @@ export const signUpBodySchema = z.object({
   name: z.string().min(1).optional(),
 })
 
-export const signUpResponseSchema = z.object({
+export const signUpUserResponseSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
   name: z.string().nullable().optional(),
+})
+
+export const signUpResponseSchema = z.object({
+  user: signUpUserResponseSchema,
+  accessToken: z.string(),
 })
 
 export type SignUpBodyDTO = z.infer<typeof signUpBodySchema>
