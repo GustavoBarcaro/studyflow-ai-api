@@ -7,6 +7,12 @@ export class UsersRepository {
     })
   }
 
+  async findById(id: string) {
+    return prisma.user.findUnique({
+      where: { id },
+    })
+  }
+
   async create(data: {
     email: string
     password: string

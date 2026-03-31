@@ -16,6 +16,7 @@ model User {
 
   topics       Topic[]
   sessions     StudySession[]
+  authSessions AuthSession[]
 }
 
 model Topic {
@@ -51,4 +52,19 @@ model Message {
   createdAt DateTime       @default(now())
 
   session   StudySession   @relation(fields: [sessionId], references: [id])
+}
+
+model AuthSession {
+  id               String   @id @default(uuid())
+  userId           String
+  refreshTokenHash String?
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  lastUsedAt       DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

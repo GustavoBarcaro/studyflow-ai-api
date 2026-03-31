@@ -5,6 +5,8 @@ import '@fastify/jwt'
 export type JWTPayload = {
   sub: string
   email: string
+  tokenType: 'access' | 'refresh'
+  sid?: string
 }
 
 declare module 'fastify' {
@@ -23,10 +25,14 @@ declare module '@fastify/jwt' {
     payload: {
       sub: string
       email: string
+      tokenType: 'access' | 'refresh'
+      sid?: string
     }
     user: {
       sub: string
       email: string
+      tokenType: 'access' | 'refresh'
+      sid?: string
     }
   }
 }

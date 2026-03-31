@@ -5,8 +5,11 @@ export const loginBodySchema = z.object({
   password: z.string().min(6),
 })
 
-export const loginResponseSchema = z.object({
-  token: z.string(),
+export const authTokensResponseSchema = z.object({
+  accessToken: z.string(),
+  refreshToken: z.string(),
 })
+
+export const loginResponseSchema = authTokensResponseSchema
 
 export type LoginDTO = z.infer<typeof loginBodySchema>
