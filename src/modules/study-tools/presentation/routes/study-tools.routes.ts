@@ -5,6 +5,8 @@ import {
   explainAgainResponseSchema,
 } from '../../application/dto/explain-again.dto'
 import {
+  generateLearningPathStepQuizParamsSchema,
+  generateLearningPathStepQuizResponseSchema,
   generateQuizBodySchema,
   generateQuizParamsSchema,
   generateQuizResponseSchema,
@@ -14,6 +16,7 @@ import {
   summarizeSessionResponseSchema,
 } from '../../application/dto/summarize.dto'
 import { explainAgainController } from '../controllers/explain-again.controller'
+import { generateLearningPathStepQuizController } from '../controllers/generate-learning-path-step-quiz.controller'
 import { generateQuizController } from '../controllers/generate-quiz.controller'
 import { summarizeSessionController } from '../controllers/summarize-session.controller'
 
@@ -66,5 +69,22 @@ export async function studyToolsRoutes(app: FastifyInstance) {
     },
     onRequest: [app.authenticate],
     handler: generateQuizController,
+  })
+
+  app.withTypeProvider().route({
+    method: 'POST',
+    url: '/learning-path-steps/:id/quiz',
+    schema: {
+      tags: ['study-tools'],
+      summary: 'Generate quiz from learning path step',
+      security: [{ bearerAuth: [] }],
+      params: generateLearningPathStepQuizParamsSchema,
+      body: generateQuizBodySchema,
+      response: {
+        200: generateLearningPathStepQuizResponseSchema,
+      },
+    },
+    onRequest: [app.authenticate],
+    handler: generateLearningPathStepQuizController,
   })
 }

@@ -69,7 +69,11 @@ export class LearningPathsRepository {
         },
       },
       include: {
-        learningPath: true,
+        learningPath: {
+          include: {
+            topic: true,
+          },
+        },
       },
     })
   }

@@ -45,6 +45,20 @@ export function buildStudySessionTitlePrompt(sessionTitle: string) {
   return `Current session title: ${sessionTitle}`
 }
 
+export function buildLearningPathPrompt(
+  learningPathTitle: string,
+  learningPathDescription: string
+) {
+  return `Current learning path: ${learningPathTitle}. ${learningPathDescription}`
+}
+
+export function buildLearningPathStepPrompt(
+  stepTitle: string,
+  stepDescription: string
+) {
+  return `Target learning path step: ${stepTitle}. ${stepDescription}`
+}
+
 export function buildGenerateQuizPrompt(
   questions: number,
   difficulty: QuizDifficulty

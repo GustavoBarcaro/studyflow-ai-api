@@ -9,6 +9,10 @@ export const generateQuizParamsSchema = z.object({
   id: z.string().uuid(),
 })
 
+export const generateLearningPathStepQuizParamsSchema = z.object({
+  id: z.string().uuid(),
+})
+
 export const generateQuizBodySchema = z.object({
   questions: z.number().min(1).max(10).default(3),
   difficulty: z
@@ -32,5 +36,26 @@ export const generateQuizResponseSchema = z.object({
   quiz: z.array(quizQuestionSchema),
 })
 
+export const generateLearningPathStepQuizResponseSchema =
+  generateQuizResponseSchema.extend({
+    learningPathStep: z.object({
+      id: z.string().uuid(),
+      learningPathId: z.string().uuid(),
+      title: z.string(),
+      description: z.string(),
+      order: z.number().int().positive(),
+    }),
+    learningPath: z.object({
+      id: z.string().uuid(),
+      topicId: z.string().uuid(),
+      title: z.string(),
+      description: z.string(),
+      status: z.string(),
+    }),
+  })
+
 export type GenerateQuizParamsDTO = z.infer<typeof generateQuizParamsSchema>
+export type GenerateLearningPathStepQuizParamsDTO = z.infer<
+  typeof generateLearningPathStepQuizParamsSchema
+>
 export type GenerateQuizBodyDTO = z.infer<typeof generateQuizBodySchema>
