@@ -80,6 +80,31 @@ export class SessionsRepository {
     })
   }
 
+  async findRecentByTopicAndUserId(
+    topicId: string,
+    userId: string,
+    limit: number
+  ) {
+    return prisma.studySession.findMany({
+      where: {
+        topicId,
+        userId,
+      },
+      include: {
+        topic: true,
+        messages: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+    })
+  }
+
   async createMessage(data: CreateMessageDataDTO) {
     return prisma.message.create({
       data: {

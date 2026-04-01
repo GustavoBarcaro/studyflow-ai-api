@@ -91,3 +91,46 @@ Do not include any text before or after the JSON.
 
 `.trim()
 }
+
+export function buildGenerateLearningPathPrompt(goal?: string) {
+  return `
+You are an expert programming tutor.
+
+Your task is to create a structured learning path for a student.
+
+Context:
+- The study topic is provided separately
+- Recent study session content is provided separately
+- Build the path based on what the student is currently learning and what should come next
+- Student goal: ${goal || 'infer the most likely next goal from the study context'}
+
+Rules:
+- Generate between 4 and 6 steps
+- Order the steps from beginner to more advanced
+- Each step must represent one clear concept or milestone
+- Titles must be short and practical
+- Descriptions must be concise and limited to 1 sentence
+- Avoid generic or overly broad steps
+- Focus on real learning progression
+- If the study context is focused on one subtopic, keep the path focused on that subtopic instead of the entire topic
+- Return a short path title
+- Return a short path description
+
+Return ONLY valid JSON in this exact format:
+
+{
+  "title": "string",
+  "description": "string",
+  "steps": [
+    {
+      "title": "string",
+      "description": "string",
+      "order": 1
+    }
+  ]
+}
+
+Do not use markdown.
+Do not include any text before or after the JSON.
+`.trim()
+}
